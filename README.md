@@ -18,24 +18,32 @@ A simple Laravel application to model and manage investment fund returns.
 **Install Dependencies:**
     ```bash
     composer install
-    npm install && npm run dev # If you have frontend assets (optional)
+    ```
+    
+    ```bash
+    npm install
     ```
 
 
 **Environment Configuration:**
     * Copy the `.env.example` file to `.env`:
+    
         ```bash
         cp .env.example .env
         ```
+        
     * Generate an application key:
+    
         ```bash
         php artisan key:generate
         ```
+        
     * Configure your database connection details in the `.env` file (e.g., `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
 
 
 **Database Migrations:**
     * Run the migrations to create the necessary database tables:
+    
         ```bash
         php artisan migrate
         ```
@@ -43,6 +51,7 @@ A simple Laravel application to model and manage investment fund returns.
 
 **Populate Database With Sample Data:**
     * Seed db with sample data
+    
      ```bash
     php artisan db:seed
     ```
