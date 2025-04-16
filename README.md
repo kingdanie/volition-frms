@@ -1,61 +1,114 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Fund Return Management System
+A simple Laravel application to model and manage investment fund returns.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+## Features
+* Create investment funds with a starting balance.
+* Add monthly, quarterly, or yearly returns (percentage-based).
+* Specify returns as compounding or non-compounding.
+* Track return history.
+* Revert previously added returns cleanly.
+* Query the calculated fund value at any specific date in the past or present.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Installation
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Clone the Repository:**
 
-## Learning Laravel
+**Install Dependencies:**
+    ```bash
+    composer install
+    npm install && npm run dev # If you have frontend assets (optional)
+    ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+**Environment Configuration:**
+    * Copy the `.env.example` file to `.env`:
+        ```bash
+        cp .env.example .env
+        ```
+    * Generate an application key:
+        ```bash
+        php artisan key:generate
+        ```
+    * Configure your database connection details in the `.env` file (e.g., `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Laravel Sponsors
+**Database Migrations:**
+    * Run the migrations to create the necessary database tables:
+        ```bash
+        php artisan migrate
+        ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-### Premium Partners
+**Populate Database With Sample Data:**
+    * Seed db with sample data
+     ```bash
+    php artisan db:seed
+    ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+## Usage (CLI Commands)
+Use Laravel's Artisan console commands to interact with the system.
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1.  **Create a Fund:**
+    ```bash
+    php artisan fund:create "My Growth Fund" 10000.00
+    ```
+    * Arguments: `name` (string), `initial_balance` (numeric), start_date (optional)
+    * Output: Confirmation message with the new Fund ID.
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2. **Add a return to a fund**
+    ```bash
+     php artisan fund:add-return {fund_id} {frequency} {percentage} {date} {--compound=1}
+    ```
 
-## Security Vulnerabilities
+     ```bash
+    # Add a 5% compounding monthly return for fund ID 1 on 2024-01-31
+    php artisan fund:add-return 1 monthly 5.0  2024-01-31  --compound=1
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    # Add a 2% non-compounding quarterly return for fund ID 1 on 2024-03-31
+    php artisan fund:add-return 1 quarterly 2.0 2024-03-31 
+    ```
+    * Arguments: `fund_id` (integer), frequency (string can should be 'monthly', 'quarterly' or 'yearly'), `percentage` (numeric), `date` (YYYY-MM-DD)    
+    * Options:
+        * `--compound`: Whether the return is compound (1) or non-compound (0), defaults to 1.
+    * Output: Confirmation message with the new Return ID.
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. **Revert a return**
+    ```bash
+    php artisan fund:revert-return {return_id}
+    
+    # Revert return for Fund 3
+    php artisan fund:revert-return 3
+    ```
+    * Arguments: `return_id`: The ID of the return to revert
+
+
+4. **Get fund value at a specific date**
+    ```bash
+    php artisan fund:get-value {fund_id} {date?}
+    ```
+       
+    ```bash
+    # Example: Get fund with id of 1 at 2023-03-25
+        php artisan fund:get-value 1 2023-03-15
+    ```
+    * Arguments: `fund_id`: The ID of the fund
+    * Options:
+        * `--date`: Optional date (YYYY-MM-DD), defaults to current date
+
+
+5. **Get a fund statement between two dates**
+     ```bash
+    php artisan fund:get-statement {fund_id} {start_date} {end_date}
+    ```
+
+    ```bash
+    # Example: Get a fund statement between 2023-01-01 - 2023-12-31
+    php artisan fund:get-statement 1 2023-01-01 2023-12-31
+    ```
+    * Arguments: `fund_id`:The ID of the fund (interger), `start_date` (YYYY-MM-DD), `end_date` (YYYY-MM-DD)
+
